@@ -34,3 +34,10 @@ ALERT_EMAIL="your-alert-recipient@example.com"
 SMTP_USER="your-smtp-user@example.com"
 
 SMTP_PASS="your-smtp-password"
+
+## Links
+- Our kanban board
+https://trello.com/b/ElOTksnh/lf10
+- Our project documentation
+https://docs.google.com/document/d/1ntNG6ryuEIHd-5GW_SOVpcBZP_2LEWdrvzzgYwrdeBo/edit?tab=t.0#heading=h.z6ne0og04bp5
+- Our project proposal 
