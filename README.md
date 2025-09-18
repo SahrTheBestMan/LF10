@@ -1,95 +1,26 @@
-#!/bin/bash
-# Cleanup + Alert Script für Ubuntu
-
-ALERT_EMAIL="lf8gruppe3@gmail.com"
-SMTP_USER="lf8gruppe3@gmx.de"
-SMTP_PASS="SYRIXUFFYUO2J5W3SZNN"
-HOSTNAME=$(hostname)
-
-# Debug: Enable logging
-LOG_FILE="/tmp/cleanup_script.log"
-exec > >(tee -a "$LOG_FILE") 2>&1
-
-echo "Script started at $(date)"
-
-# Prüfe ob curl installiert ist
-if ! command -v curl &> /dev/null; then
-    echo "curl ist nicht installiert. Installiere es..."
-    apt-get update
-    apt-get install -y curl
-fi
-
-DISK_BEFORE=$(df -B1 / | awk 'NR==2 {print $4}')
-
-# --- Cleanup ---
-echo "Starting cleanup..."
-apt-get clean
-apt-get autoremove -y --purge
-rm -rf /var/lib/apt/lists/*
-
-journalctl --vacuum-time=7d 2>/dev/null || echo "Journal cleanup nicht verfügbar"
-rm -rf /tmp/* /var/tmp/*
-
-for dir in /home/*; do
-    if [ -d "$dir" ]; then
-        [ -d "$dir/Downloads" ] && rm -rf "$dir/Downloads/"*
-        [ -d "$dir/.cache" ] && rm -rf "$dir/.cache/"*
-        echo "Cleaned user directory: $dir"
-    fi
-done
-
-[ -d /root/Downloads ] && rm -rf /root/Downloads/*
-[ -d /root/.cache ] && rm -rf /root/.cache/*
-
-# --- Check ---
-DISK_AFTER=$(df -B1 / | awk 'NR==2 {print $4}')
-DISK_USAGE=$(df -h / | awk 'NR==2 {print $5}' | sed 's/%//')
-DISK_FREED=$(( (DISK_AFTER - DISK_BEFORE) / 1024 / 1024 ))
-
-echo "Disk before: $DISK_BEFORE bytes"
-echo "Disk after: $DISK_AFTER bytes"
-echo "Disk usage: $DISK_USAGE%"
-echo "Freed: $DISK_FREED MB"
-
-# --- Email function ---
-send_mail() {
-    SUBJECT=$1
-    BODY=$2
-    
-    echo "Attempting to send email: $SUBJECT"
-    
-    MAIL_FILE=$(mktemp)
-    cat > "$MAIL_FILE" << EOM
-From: $SMTP_USER
-To: $ALERT_EMAIL
-Subject: $SUBJECT
-Date: $(date -R)
-
-$BODY
-EOM
-
-    RESULT=$(curl -s -v --url 'smtps://mail.gmx.net:465' \
-        --ssl-reqd \
-        --mail-from "$SMTP_USER" \
-        --mail-rcpt "$ALERT_EMAIL" \
-        --user "$SMTP_USER:$SMTP_PASS" \
-        --upload-file "$MAIL_FILE" 2>&1)
-    
-    echo "Curl result: $RESULT"
-    rm -f "$MAIL_FILE"
-}
-
-# --- Alert ---
-echo "Checking disk usage for alert..."
-if [ "$DISK_USAGE" -ge 1 ]; then
-    echo "Disk usage is $DISK_USAGE%, sending alert..."
-    send_mail "ALERT: Ubuntu VM $HOSTNAME Disk Usage" \
-    "Festplattennutzung auf $HOSTNAME: ${DISK_USAGE}%
-
-Frei gemacht: $DISK_FREED MB
-Zeit: $(date)"
-else
-    echo "Disk usage is acceptable ($DISK_USAGE%), no alert needed."
-fi
-
-echo "Script completed at $(date)"
+Projektantrag für das FISI Projekt in Lernfeld 10
+Gruppe 1 - Vahan Telunz & Sahr Qasm
+1. Projektbezeichnung
+Automatisierte Speicherbereinigung auf Arbeitsplatzrechnern zur Optimierung der Systemleistung und Entlastung der Benutzer
+1.1 Kurzform der Aufgabenstellung
+Das gewählte Lernfeld 10 Szenario A ist ein freies Projekt-Auswahl im Themenbereich „Serverdienste bereitstellen und Administrationsaufgaben automatisieren“. Im Rahmen unseres Projekts sollen VMs automatisch bereinigt und nicht mehr benötigte alte Log-Dateien gelöscht werden.
+1.2 Ist-Analyse
+Derzeit haben viele VMs wenig freien Speicherplatz. Benutzer müssen regelmäßig manuell Dateien löschen, um Speicher freizugeben. Dieser Vorgang ist zeitaufwendig und unterbricht die Arbeit der Benutzer häufig. Zudem führt das auch dazu, dass die Systeme langsamer werden und teilweise nicht mehr voll funktionsfähig sind. 
+Das Problem besteht seit längerer Zeit.
+2. Zielsetzung / Entwicklung Soll-Konzept
+2.1 Was soll am Ende des Projekts erreicht sein?
+Am Ende des Projekts sollen die VMs automatisch bereinigt werden. Über ein Skript kann erkannt werden, ob der Speicher z.B. zu 90% voll ist, falls das zutrifft, können alte Log Dateien automatisch gelöscht werden. Falls keine Log Datein vorhanden sind, die älter als vier Wochen sind, dann wird die IT-Abteilung per E-Mail automatisch benachrichtigt. 
+Durch Behebung des Problems verbessert sich die Performance der VMs, die Benutzer werden entlastet und Ausfälle durch genug vorhandenen Speicher werden vermieden. Langfristig entsteht so eine stabile und effiziente Arbeitsumgebung. 
+Eine andere Möglichkeit wäre, über Azure die VM Speicher zu erweitern, das würde aber mehr kosten und daher macht eine Bereinigung sinnvoller.
+2.2 Welche Anforderungen müssen erfüllt sein?
+Automatische Ausführung des Skripts.
+Löschung unnötiger Dateien wie z.B. Log Dateien.
+Automatische Speicherplatzüberwachung und Benachrichtigung.
+Einhaltung von vordefinierten Speicherbereinigungsregeln. 
+Einfache Erweiterbarkeit.
+Sicherstellung, dass keine systemkritischen Dateien gelöscht werden.
+2.3 Welche Einschränkungen müssen berücksichtigt werden?
+Es dürfen ausschließlich nicht kritische Dateien gelöscht werden
+Das Projekt beschränkt sich auf VMs innerhalb der Firma
+3. Projektplanung
+Es handelt sich um ein In-House Projekt, das in enger Abstimmung mit der IT-Fachabteilung umgesetzt wird. Iterative Vorgehensweise und Tests auf Referenzsystemen sind vorgesehen.
