@@ -30,5 +30,7 @@ The script helps to keep systems stable by freeing up space, cleaning temporary 
 Adjust the variables inside `cleanup.sh` as needed:
 
 ALERT_EMAIL="your-alert-recipient@example.com"
+
 SMTP_USER="your-smtp-user@example.com"
+
 SMTP_PASS="your-smtp-password"
