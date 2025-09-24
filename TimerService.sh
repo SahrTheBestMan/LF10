@@ -3,15 +3,15 @@ az vm run-command invoke \
   --name VM02 \
   --resource-group LF10-SQ-VT \
   --scripts @- <<'EOF'
-# /opt/cleanup.sh anlegen
+# create /opt/cleanup.sh 
 cat > /opt/cleanup.sh <<'EOL'
 #!/bin/bash
-echo "Cleanup Script läuft $(date)" >> /tmp/cleanup.log
+echo "Cleanup script is running $(date)" >> /tmp/cleanup.log
 EOL
 
 chmod +x /opt/cleanup.sh
 
-# Service-Datei erstellen
+# service file creation
 cat > /etc/systemd/system/vm-cleanup.service <<'EOL'
 [Unit]
 Description=Runs Cleanup Script
@@ -19,7 +19,7 @@ Description=Runs Cleanup Script
 ExecStart=/bin/bash /opt/cleanup.sh
 EOL
 
-# Timer-Datei erstellen
+# timer file creation
 cat > /etc/systemd/system/vm-cleanup.timer <<'EOL'
 [Unit]
 Description=Runs Cleanup Script hourly
@@ -30,8 +30,9 @@ OnUnitActiveSec=1h
 WantedBy=timers.target
 EOL
 
-# Systemd neu laden und Timer aktivieren
+# reload systemd and activate timer
 systemctl daemon-reload
 systemctl enable vm-cleanup.timer
 systemctl start vm-cleanup.timer
 EOF
+
