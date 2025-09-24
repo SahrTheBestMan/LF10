@@ -6,22 +6,22 @@ SMTP_USER="lf8gruppe3@gmx.de"
 SMTP_PASS="SYRIXUFFYUO2J5W3SZNN"
 HOSTNAME=$(hostname)
 
-# Debug: Enable logging
+# enable logging
 LOG_FILE="/tmp/cleanup_script.log"
 exec > >(tee -a "$LOG_FILE") 2>&1
 
 echo "Script started at $(date)"
 
-# Prüfe ob curl installiert ist
+# check if curl is installed
 if ! command -v curl &> /dev/null; then
-    echo "curl ist nicht installiert. Installiere es..."
+    echo " curl installed."
     apt-get update
     apt-get install -y curl
 fi
 
 DISK_BEFORE=$(df -B1 / | awk 'NR==2 {print $4}')
 
-# --- Cleanup ---
+# cleanup 
 echo "Starting cleanup..."
 apt-get clean
 apt-get autoremove -y --purge
@@ -41,7 +41,7 @@ done
 [ -d /root/Downloads ] && rm -rf /root/Downloads/*
 [ -d /root/.cache ] && rm -rf /root/.cache/*
 
-# --- Check ---
+# check
 DISK_AFTER=$(df -B1 / | awk 'NR==2 {print $4}')
 DISK_USAGE=$(df -h / | awk 'NR==2 {print $5}' | sed 's/%//')
 DISK_FREED=$(( (DISK_AFTER - DISK_BEFORE) / 1024 / 1024 ))
@@ -51,7 +51,7 @@ echo "Disk after: $DISK_AFTER bytes"
 echo "Disk usage: $DISK_USAGE%"
 echo "Freed: $DISK_FREED MB"
 
-# --- Email function ---
+# email
 send_mail() {
     SUBJECT=$1
     BODY=$2
@@ -79,7 +79,7 @@ EOM
     rm -f "$MAIL_FILE"
 }
 
-# --- Alert ---
+# alert
 echo "Checking disk usage for alert..."
 if [ "$DISK_USAGE" -ge 1 ]; then
     echo "Disk usage is $DISK_USAGE%, sending alert..."
@@ -93,3 +93,4 @@ else
 fi
 
 echo "Script completed at $(date)"
+
