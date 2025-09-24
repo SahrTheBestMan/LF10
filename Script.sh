@@ -1,5 +1,4 @@
 #!/bin/bash
-# Cleanup + Alert Script für Ubuntu
 
 ALERT_EMAIL="lf8gruppe3@gmail.com"
 SMTP_USER="lf8gruppe3@gmx.de"
@@ -93,4 +92,5 @@ else
 fi
 
 echo "Script completed at $(date)"
+
 
