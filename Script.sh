@@ -13,7 +13,7 @@ echo "Script started at $(date)"
 
 # check if curl is installed
 if ! command -v curl &> /dev/null; then
-    echo " curl installed."
+    echo " curl not installed. Installing..."
     apt-get update
     apt-get install -y curl
 fi
@@ -92,5 +92,6 @@ else
 fi
 
 echo "Script completed at $(date)"
+
 
 
