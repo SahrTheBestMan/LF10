@@ -35,7 +35,5 @@ The script helps to keep systems stable by freeing up space, cleaning temporary 
 ## Links
 - Our kanban board
 https://trello.com/b/ElOTksnh/lf10
-- Our project documentation
-https://docs.google.com/document/d/1ntNG6ryuEIHd-5GW_SOVpcBZP_2LEWdrvzzgYwrdeBo/edit?tab=t.0#heading=h.z6ne0og04bp5
 - Our project proposal 
 https://docs.google.com/document/d/1_cJRrzbBQTkEd3by3DlaE6roAgQ926BN_q3LDrajAvE/edit?tab=t.0#heading=h.q42t5njy2deb
